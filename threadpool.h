@@ -38,7 +38,7 @@ threadpool<T>::threadpool(int thread_number, int max_requests) :    // 构造函
     if (thread_number <= 0 || max_requests <= 0)            // 如果线程数与最大任务请求数不符合要求，则抛出异常
         throw std::exception();
 
-    m_threads = new pthread_t[thread_number];               // 线程数组，后面的线程pid号都是存放在这个数组中
+    m_threads = new pthread_t[thread_number];               // 线程数组，后面的线程tid号都是存放在这个数组中
     if (!m_threads)                                         // 创建失败，抛出异常
         throw std::exception();
     
