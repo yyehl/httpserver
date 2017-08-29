@@ -56,16 +56,17 @@ threadpool<T>::threadpool(int thread_number, int max_requests) :    // 构造函
     {
         printf("create the %dth thread\n", i);
 
-        if (pthread_create(m_threads[i-1], NULL, worker, this) != 0)   // 创建线程，线程id存放于线程数组
+        if (pthread_create(m_threads+i, NULL, worker, this) != 0)      // 创建线程，线程id存放于线程数组
                                                                        // 注意，给worker传递的参数是 this，即指针对象本身的指针
                                                                        // 因为worker是必须设置为静态成员函数，否则不能通过
         {                                                              // 因为非静态函数会自动加一个this指针，导致编译无法通过
-                                                                       // 线程只要初始化了，就已经在worker函数那里等着了 
+            printf("pthread create error");                            // 线程只要初始化了，就已经在worker函数那里等着了 
             delete [] m_threads;           // 若线程创建失败，则释放之前申请的动态数组，后抛出异常
             throw std::exception();        
         }
         if (pthread_detach(m_threads[i-1]) != 0)       // 将每个新创建的线程设置为分离属性，这样就不需要其他线程等待它的结束
         {
+            printf("pthread detach error"); 
             delete [] m_threads;            // 如果设置失败，先释放之前申请的动态内存，后抛出异常
             throw std::exception();
         }

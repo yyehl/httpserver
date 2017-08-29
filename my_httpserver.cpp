@@ -24,7 +24,7 @@ void addsig(int sig, void(handler)(int), bool restart = true)
 {
     struct sigaction sa;
     memset(&sa, '\0', sizeof(sa));
-    sa.sa_handle = handle;  // 
+    sa.sa_handler = handler;  // 
     if (restart)
     {
         sa.sa_flags |= SA_RESTART;
@@ -52,10 +52,10 @@ int main(int argc, char* argv[])
 
     addsig(SIGPIPE, SIG_IGN);
 
-    threadpool<http_conn>* pool = NULL;
+    threadpool<my_httpconn>* pool = NULL;
     try 
     {
-        pool = new threadpool<http_conn>;
+        pool = new threadpool<my_httpconn>;
     }
     catch(...)
     {
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     }
 
     /** 预先为每一个可能连接的客户分配一个http_conn对象 **/
-    http_conn* users = new http_conn[MAX_FD];
+    my_httpconn* users = new my_httpconn[MAX_FD];
     assert(users);                              // 如果分配失败，users为空，则将会异常
     int user_count = 0;                         // 记录当前用户连接数量
 
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     int epollfd = epoll_create(5);      // 5只是告诉内核，epoll表大概需要多大
     assert(epollfd != -1);
     addfd(epollfd, listenfd, false);    // 把listenfd加入了监听表中，当有连接完成了，epoll就返回
-    http_conn::m_epollfd = epollfd;
+    my_httpconn::m_epollfd = epollfd;
 
     while (1)
     {
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
                     printf("errno is: %d", errno);
                     continue;                       // 如果出错了，则继续处理下一个已准备的事件
                 }
-                if (http_conn::m_user_count >= MAX_FD)
+                if (my_httpconn::m_user_count >= MAX_FD)
                 {
                     show_error(connfd, "Internal server busy");
                     continue;                       // 如果已连接的用户已经超过了描述符的最大值

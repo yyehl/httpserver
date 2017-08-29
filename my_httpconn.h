@@ -57,5 +57,4 @@ private:
     my_parse*                   m_parse;
 };
 
-
 #endif 

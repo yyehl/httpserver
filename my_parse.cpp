@@ -151,6 +151,13 @@ my_parse::HTTP_CODE my_parse::parse_content(char* text)
     return NO_REQUEST;
 }
 
+char* my_parse::get_line()
+{
+    std::string ret;
+    getline(std::cin, ret);
+    return const_cast<char*>(ret.c_str());
+}
+
 my_parse::HTTP_CODE my_parse::process_read()
 {
     LINE_STATUS line_status = LINE_OK;

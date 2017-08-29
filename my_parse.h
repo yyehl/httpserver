@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <iostream>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
